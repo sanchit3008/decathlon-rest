@@ -6,6 +6,7 @@ from pymongo import MongoClient
 from util import *
 from bson.objectid import ObjectId
 
+#credentials removed due to repo being public
 client = MongoClient('mongodb+srv://:@cluster0.47fza.mongodb.net/decathlon?retryWrites=true&w=majority')
 
 users = client.decathlon.users
@@ -28,6 +29,12 @@ def validateLogin():
         return createJsonResponse(False)
     else:
         return getEmployee(empId)
+
+@app.route('/employee/all', methods=['GET'])
+@cross_origin()
+def getAllEmployees():
+    allusers = getAllUsers()
+    return createJsonResponse(allusers)
 
 @app.route('/employee/<empId>', methods = ['GET'])
 @cross_origin()
@@ -106,6 +113,9 @@ def modifyLeave():
     except:
         return {}
     return {"response" : True}
+
+def getAllUsers():
+    return users.find().sort('name', pymongo.ASCENDING)
 
 def getUserData(empId):
     return users.find_one({"empId": empId})
